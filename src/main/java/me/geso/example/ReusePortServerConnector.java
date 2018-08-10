@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
+import java.net.SocketOption;
+import java.net.StandardSocketOptions;
 import java.nio.channels.Channel;
 import java.nio.channels.ServerSocketChannel;
 
@@ -79,12 +81,9 @@ public class ReusePortServerConnector extends ServerConnector {
 			FileDescriptor fd = (FileDescriptor)fieldFd.get(serverChannel);
 			//IllegalAccessException
 
-			Method methodSetIntOption0 =
-					Net.class.getDeclaredMethod("setIntOption0", FileDescriptor.class,
-							Boolean.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE);
+			Method methodSetIntOption0 = Net.class.getDeclaredMethod("setIntOption0", FileDescriptor.class, Boolean.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE, Boolean.TYPE);
 			methodSetIntOption0.setAccessible(true);
-			methodSetIntOption0.invoke(null, fd, false, '\uffff',
-					SO_REUSEPORT, 1);
+			methodSetIntOption0.invoke(null, fd, false, '\uffff', SO_REUSEPORT, 1, false);
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
